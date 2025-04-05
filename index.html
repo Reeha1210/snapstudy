@@ -124,6 +124,14 @@
       </ul>
     </section>
 
+    <section class="card" id="simplify">
+      <h2>🤖 AI Note Simplifier</h2>
+      <p>Paste difficult content here to make it simpler and easier to understand using AI.</p>
+      <textarea id="simplifyInput" placeholder="Paste difficult content here..."></textarea>
+      <button onclick="simplifyText()">Simplify</button>
+      <div id="simplifiedOutput" style="margin-top: 1rem;"></div>
+    </section>
+
     <section class="card" id="flashcards">
       <h2>🃏 AI Flashcard Maker</h2>
       <p>Paste your notes below and generate smart flashcards using AI.</p>
@@ -141,14 +149,6 @@
       </div>
       <div id="uploadStatus"></div>
     </section>
-
-    <section class="card" id="simplify">
-      <h2>🤖 AI Note Simplifier</h2>
-      <p>Paste difficult content here to make it simpler and easier to understand using AI.</p>
-      <textarea id="simplifyInput" placeholder="Paste difficult content here..."></textarea>
-      <button onclick="simplifyText()">Simplify</button>
-      <div id="simplifiedOutput" style="margin-top: 1rem;"></div>
-    </section>
   </div>
 
   <footer>
@@ -163,40 +163,25 @@
 
       if (!text) return;
 
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const response = await fetch('https://api-inference.huggingface.co/models/mrm8488/t5-base-finetuned-question-generation-ap', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer YOUR_API_KEY'
+          'Authorization': 'Bearer YOUR_HUGGINGFACE_API_KEY'
         },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: [{
-            role: 'user',
-            content: `Break these notes into flashcards with a question and answer format:\n${text}`
-          }]
-        })
+        body: JSON.stringify({ inputs: text })
       });
 
       const data = await response.json();
-      const answers = data.choices[0].message.content.split('\n\n');
+      const answer = data[0]?.generated_text || 'Flashcard content not generated.';
 
-      answers.forEach(pair => {
-        const [question, answer] = pair.split('\n');
-        const card = document.createElement('div');
-        card.className = 'flashcard';
-        card.textContent = question || 'Flashcard';
-        card.dataset.front = question;
-        card.dataset.back = answer;
-        card.onclick = () => {
-          if (card.textContent === card.dataset.front) {
-            card.textContent = card.dataset.back;
-          } else {
-            card.textContent = card.dataset.front;
-          }
-        };
-        container.appendChild(card);
-      });
+      const card = document.createElement('div');
+      card.className = 'flashcard';
+      card.textContent = answer;
+      card.onclick = () => {
+        card.classList.toggle('flipped');
+      };
+      container.appendChild(card);
     }
 
     async function simplifyText() {
@@ -204,23 +189,17 @@
       const output = document.getElementById('simplifiedOutput');
       output.innerHTML = 'Loading...';
 
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const response = await fetch('https://api-inference.huggingface.co/models/facebook/bart-large-cnn', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer YOUR_API_KEY'
+          'Authorization': 'Bearer YOUR_HUGGINGFACE_API_KEY'
         },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: [{
-            role: 'user',
-            content: `Explain this to me as if I am 10:\n${input}`
-          }]
-        })
+        body: JSON.stringify({ inputs: `Explain this like I'm 10: ${input}` })
       });
 
       const data = await response.json();
-      output.innerHTML = `<p><strong>Simplified:</strong> ${data.choices[0].message.content}</p>`;
+      output.innerHTML = `<p><strong>Simplified:</strong> ${data[0]?.summary_text || 'Error simplifying text.'}</p>`;
     }
 
     const dropZone = document.getElementById('drop-zone');
