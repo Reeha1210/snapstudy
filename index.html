@@ -53,7 +53,9 @@
       padding: 1rem;
       margin-bottom: 1rem;
       text-align: center;
+      cursor: pointer;
       transition: transform 0.6s;
+      transform-style: preserve-3d;
     }
     .flashcard.flipped {
       transform: rotateY(180deg);
@@ -151,36 +153,47 @@
   </footer>
 
   <script>
-    function generateFlashcards() {
+    async function generateFlashcards() {
       const text = document.getElementById('noteInput').value;
       const container = document.getElementById('card-container');
       container.innerHTML = '';
 
       if (!text) return;
 
-      const lines = text.split('.');
-      lines.forEach((line, i) => {
-        if (line.trim().length < 10) return;
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer YOUR_API_KEY'
+        },
+        body: JSON.stringify({
+          model: 'gpt-3.5-turbo',
+          messages: [{
+            role: 'user',
+            content: `Break these notes into flashcards with a question and answer format:\n${text}`
+          }]
+        })
+      });
+
+      const data = await response.json();
+      const answers = data.choices[0].message.content.split('\n\n');
+
+      answers.forEach(pair => {
+        const [question, answer] = pair.split('\n');
         const card = document.createElement('div');
         card.className = 'flashcard';
-        card.textContent = line.trim();
-        card.style.cursor = 'pointer';
+        card.textContent = question || 'Flashcard';
+        card.dataset.front = question;
+        card.dataset.back = answer;
         card.onclick = () => {
-          if (card.dataset.flipped) {
-            card.textContent = card.dataset.front;
-            card.dataset.flipped = '';
+          if (card.textContent === card.dataset.front) {
+            card.textContent = card.dataset.back;
           } else {
-            card.dataset.front = card.textContent;
-            card.textContent = 'Answer: ' + summarize(line);
-            card.dataset.flipped = 'true';
+            card.textContent = card.dataset.front;
           }
         };
         container.appendChild(card);
       });
-    }
-
-    function summarize(text) {
-      return 'This is a possible answer summary.';
     }
 
     const dropZone = document.getElementById('drop-zone');
