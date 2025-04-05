@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SnapStudy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background-color: #f4f6f9;
+      color: #333;
+    }
+    header {
+      background-color: #10b981;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      background-color: #eef1f6;
+      padding: 1rem;
+    }
+    nav a {
+      color: #10b981;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .content {
+      padding: 2rem;
+    }
+    .card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #eef1f6;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📚 SnapStudy</h1>
+    <p>Study Smart. Study Snappy.</p>
+  </header>
+
+  <nav>
+    <a href="#flashcards">🃏 Flashcards</a>
+    <a href="#upload">📄 Upload Notes</a>
+    <a href="#simplify">🤖 AI Simplifier</a>
+    <a href="#premade">📚 Pre-made Notes</a>
+    <a href="#pyqs">📝 PYQs</a>
+  </nav>
+
+  <div class="content">
+    <section class="card" id="flashcards">
+      <h2>🃏 AI Flashcard Maker</h2>
+      <p>Turn your notes into flippable flashcards using AI.</p>
+      <iframe src="https://glasp.co/ai/flashcard" style="width:100%; height:500px; border:none;"></iframe>
+    </section>
+
+    <section class="card" id="upload">
+      <h2>📄 Upload Your Notes</h2>
+      <p>Submit your notes or material below to create flashcards and simplified summaries.</p>
+      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd-example-form" style="width:100%; height:600px; border:none;"></iframe>
+    </section>
+
+    <section class="card" id="simplify">
+      <h2>🤖 AI Note Simplifier</h2>
+      <p>Paste difficult content here to make it simpler and easier to understand using AI.</p>
+      <iframe src="https://glasp.co/ai/summarizer" style="width:100%; height:500px; border:none;"></iframe>
+    </section>
+
+    <section class="card" id="premade">
+      <h2>📚 Pre-made Notes</h2>
+      <p>CBSE Class 9 notes created by SnapStudy. Simple, clear and exam-ready!</p>
+      <ul>
+        <li><a href="https://drive.google.com/folderview?id=your-folder-id">Science Notes (PDF)</a></li>
+        <li><a href="https://drive.google.com/folderview?id=your-folder-id">Social Science Notes</a></li>
+        <li><a href="https://drive.google.com/folderview?id=your-folder-id">English Literature + Grammar</a></li>
+      </ul>
+    </section>
+
+    <section class="card" id="pyqs">
+      <h2>📝 Previous Year Questions (PYQs)</h2>
+      <p>Practice real CBSE exam questions by subject:</p>
+      <ul>
+        <li><a href="https://drive.google.com/folderview?id=your-pyq-science">Science PYQs</a></li>
+        <li><a href="https://drive.google.com/folderview?id=your-pyq-sst">Social Science PYQs</a></li>
+        <li><a href="https://drive.google.com/folderview?id=your-pyq-english">English PYQs</a></li>
+        <li><a href="https://drive.google.com/folderview?id=your-pyq-math">Math PYQs</a></li>
+      </ul>
+    </section>
+  </div>
+
+  <footer>
+    Made with 💚 by Reeha | Powered by SnapStudy | 2025
+  </footer>
+</body>
+</html>
