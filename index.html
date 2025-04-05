@@ -106,13 +106,14 @@
 
     <section class="card" id="upload">
       <h2>📄 Upload Your Notes</h2>
-      <p>Drag and drop your notes here to upload and process for flashcards or summaries.</p>
+      <p>Drag and drop your notes here to upload and generate flashcards.</p>
       <div id="drop-zone" 
            style="border: 2px dashed #10b981; padding: 2rem; text-align: center; border-radius: 1rem;">
-        <p>📂 Drag and drop your notes here or click to upload</p>
-        <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" style="display: none;" />
+        <p>📂 Drag and drop your .txt notes here or click to upload</p>
+        <input type="file" id="fileInput" accept=".txt" style="display: none;" />
       </div>
       <div id="uploadStatus"></div>
+      <div id="generatedFlashcards"></div>
     </section>
 
     <section class="card" id="simplify">
@@ -174,6 +175,7 @@
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('fileInput');
     const status = document.getElementById('uploadStatus');
+    const generatedFlashcards = document.getElementById('generatedFlashcards');
 
     dropZone.addEventListener('click', () => fileInput.click());
 
@@ -199,8 +201,36 @@
     });
 
     function handleFileUpload(file) {
-      if (!file) return;
-      status.innerHTML = `<p>✅ ${file.name} uploaded successfully (simulated)</p>`;
+      if (!file || file.type !== 'text/plain') {
+        status.innerHTML = '<p style="color:red">Please upload a .txt file only.</p>';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const text = event.target.result;
+        status.innerHTML = `<p>✅ ${file.name} uploaded successfully</p>`;
+        generateFlashcardsFromText(text);
+      };
+      reader.readAsText(file);
+    }
+
+    function generateFlashcardsFromText(text) {
+      generatedFlashcards.innerHTML = '';
+      const lines = text.split('\n');
+      for (let i = 0; i < lines.length; i += 2) {
+        const question = lines[i];
+        const answer = lines[i + 1] || '';
+        if (!question.trim()) continue;
+        const card = document.createElement('div');
+        card.className = 'flashcard';
+        card.style.cursor = 'pointer';
+        card.textContent = question;
+        card.onclick = () => {
+          card.textContent = card.textContent === question ? answer : question;
+        };
+        generatedFlashcards.appendChild(card);
+      }
     }
   </script>
 </body>
