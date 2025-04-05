@@ -58,7 +58,7 @@
     .flashcard.flipped {
       transform: rotateY(180deg);
     }
-    .flashcard input, .flashcard textarea, .flashcard button {
+    .flashcard input, .flashcard button, .flashcard textarea {
       margin: 0.5rem 0;
       padding: 0.5rem;
       font-size: 1rem;
@@ -96,23 +96,16 @@
   <div class="content">
     <section class="card" id="flashcards">
       <h2>🃏 AI Flashcard Maker</h2>
-      <p>Create, flip, and generate flashcards with advanced AI below.</p>
-      <div class="flashcard">
-        <textarea id="notesInput" rows="5" placeholder="Paste your notes or concepts here..."></textarea>
-        <button onclick="generateFlashcardsFromNotes()">✨ Auto-Generate Flashcards</button>
-        <hr />
-        <input type="text" id="question" placeholder="Enter your question here">
-        <input type="text" id="answer" placeholder="Enter the answer here">
-        <button onclick="createFlashcard()">Create Flashcard</button>
-      </div>
+      <p>Paste your notes below and generate smart flashcards using AI.</p>
+      <textarea id="noteInput" placeholder="Paste your study notes here..."></textarea>
+      <button onclick="generateFlashcards()">Generate Flashcards</button>
       <div id="card-container"></div>
     </section>
 
     <section class="card" id="upload">
       <h2>📄 Upload Your Notes</h2>
       <p>Drag and drop your notes here to upload and process for flashcards or summaries.</p>
-      <div id="drop-zone" 
-           style="border: 2px dashed #10b981; padding: 2rem; text-align: center; border-radius: 1rem;">
+      <div id="drop-zone" style="border: 2px dashed #10b981; padding: 2rem; text-align: center; border-radius: 1rem;">
         <p>📂 Drag and drop your notes here or click to upload</p>
         <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" style="display: none;" />
       </div>
@@ -129,15 +122,14 @@
       <h2>📚 Pre-made Notes</h2>
       <p>CBSE Class 9 notes created by SnapStudy. Simple, clear and exam-ready!</p>
       <ul>
-        <li><strong>Science Notes</strong>
+        <li>
+          <strong>Science Notes</strong>
           <ul>
             <li><a href="https://docs.google.com/document/d/1YqiWBANvLSLMR3LR2AUzzGmeUtNWbK7DMapu4Kc6jNc/export?format=pdf" target="_blank">Chemistry Chapter 1 - Matter in Our Surroundings (PDF)</a></li>
-            <li><a href="https://drive.google.com/file/d/1fwn5RIsp6Cg1akupT34jHTl4CkBaUVBe/view?usp=sharing" target="_blank">Biology Chapter 5 - The Fundamental Unit of Life (PDF)</a></li>
-            <li><a href="https://drive.google.com/file/d/1WLfVFcOENbWxFlq7AbWJwOjEBPKuMm7l/view?usp=sharing" target="_blank">Physics Chapter 8 - Motion (PDF)</a></li>
           </ul>
         </li>
-        <li><a href="https://drive.google.com/drive/folders/1TPWqzqnF6bDe4nDZs-5JTu1XP7_kovuv?usp=sharing">Social Science Notes</a></li>
-        <li><a href="https://drive.google.com/drive/folders/1EVtxj9ZNyolWJZnP56wepRg1F1rYEC0I?usp=sharing">English Literature + Grammar</a></li>
+        <li><a href="https://drive.google.com/folderview?id=your-folder-id">Social Science Notes</a></li>
+        <li><a href="https://drive.google.com/folderview?id=your-folder-id">English Literature + Grammar</a></li>
       </ul>
       <a class="download-button" href="https://drive.google.com/uc?export=download&id=1YqiWBANvLSLMR3LR2AUzzGmeUtNWbK7DMapu4Kc6jNc" download>⬇️ Download Chemistry Chapter 1 PDF</a>
     </section>
@@ -146,10 +138,10 @@
       <h2>📝 Previous Year Questions (PYQs)</h2>
       <p>Practice real CBSE exam questions by subject:</p>
       <ul>
-        <li><a href="https://drive.google.com/drive/folders/1czP0x6lj23Xt7T6NQuZEd0A0-mQvWZxJ?usp=sharing">Science PYQs</a></li>
-        <li><a href="https://drive.google.com/drive/folders/1JG8Ud1QPKo0J2mOd-c5nJtNkjA2LTgfH?usp=sharing">Social Science PYQs</a></li>
-        <li><a href="https://drive.google.com/drive/folders/1_m3AFtq9E-y95nWFMrlTPr4AUKu8v_Ln?usp=sharing">English PYQs</a></li>
-        <li><a href="https://drive.google.com/drive/folders/1khfyE7a0VaAOpZXOn_7ewkM0jqtqIqX3?usp=sharing">Math PYQs</a></li>
+        <li><a href="https://drive.google.com/folderview?id=your-pyq-science">Science PYQs</a></li>
+        <li><a href="https://drive.google.com/folderview?id=your-pyq-sst">Social Science PYQs</a></li>
+        <li><a href="https://drive.google.com/folderview?id=your-pyq-english">English PYQs</a></li>
+        <li><a href="https://drive.google.com/folderview?id=your-pyq-math">Math PYQs</a></li>
       </ul>
     </section>
   </div>
@@ -159,43 +151,36 @@
   </footer>
 
   <script>
-    function createFlashcard() {
-      const question = document.getElementById('question').value;
-      const answer = document.getElementById('answer').value;
+    function generateFlashcards() {
+      const text = document.getElementById('noteInput').value;
       const container = document.getElementById('card-container');
+      container.innerHTML = '';
 
-      if (!question || !answer) return;
+      if (!text) return;
 
-      const card = document.createElement('div');
-      card.className = 'flashcard';
-      card.style.cursor = 'pointer';
-      card.textContent = question;
-      card.onclick = () => {
-        card.textContent = card.textContent === question ? answer : question;
-      };
-      container.appendChild(card);
+      const lines = text.split('.');
+      lines.forEach((line, i) => {
+        if (line.trim().length < 10) return;
+        const card = document.createElement('div');
+        card.className = 'flashcard';
+        card.textContent = line.trim();
+        card.style.cursor = 'pointer';
+        card.onclick = () => {
+          if (card.dataset.flipped) {
+            card.textContent = card.dataset.front;
+            card.dataset.flipped = '';
+          } else {
+            card.dataset.front = card.textContent;
+            card.textContent = 'Answer: ' + summarize(line);
+            card.dataset.flipped = 'true';
+          }
+        };
+        container.appendChild(card);
+      });
     }
 
-    function generateFlashcardsFromNotes() {
-      const text = document.getElementById('notesInput').value;
-      const container = document.getElementById('card-container');
-
-      if (!text.trim()) return;
-
-      const lines = text.split(/\n+/);
-      lines.forEach((line, index) => {
-        if (line.includes(':')) {
-          const [q, a] = line.split(':');
-          const card = document.createElement('div');
-          card.className = 'flashcard';
-          card.style.cursor = 'pointer';
-          card.textContent = q.trim();
-          card.onclick = () => {
-            card.textContent = card.textContent === q.trim() ? a.trim() : q.trim();
-          };
-          container.appendChild(card);
-        }
-      });
+    function summarize(text) {
+      return 'This is a possible answer summary.';
     }
 
     const dropZone = document.getElementById('drop-zone');
