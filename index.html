@@ -95,8 +95,13 @@
 
     <section class="card" id="upload">
       <h2>📄 Upload Your Notes</h2>
-      <p>Submit your notes or material below to create flashcards and simplified summaries.</p>
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd-example-form" style="width:100%; height:600px; border:none;"></iframe>
+      <p>Drag and drop your notes here to upload and process for flashcards or summaries.</p>
+      <div id="drop-zone" 
+           style="border: 2px dashed #10b981; padding: 2rem; text-align: center; border-radius: 1rem;">
+        <p>📂 Drag and drop your notes here or click to upload</p>
+        <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" style="display: none;" />
+      </div>
+      <div id="uploadStatus"></div>
     </section>
 
     <section class="card" id="simplify">
@@ -152,6 +157,38 @@
         card.textContent = card.textContent === question ? answer : question;
       };
       container.appendChild(card);
+    }
+
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('fileInput');
+    const status = document.getElementById('uploadStatus');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.style.backgroundColor = '#def7ec';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.backgroundColor = 'transparent';
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.style.backgroundColor = 'transparent';
+      const file = e.dataTransfer.files[0];
+      handleFileUpload(file);
+    });
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      handleFileUpload(file);
+    });
+
+    function handleFileUpload(file) {
+      if (!file) return;
+      status.innerHTML = `<p>✅ ${file.name} uploaded successfully (simulated)</p>`;
     }
   </script>
 </body>
